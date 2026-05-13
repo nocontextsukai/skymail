@@ -680,7 +680,7 @@ function renderDetail(d) {
       <div></div>
     </div>
     <p class="mail-meta-line">${escapeHtml(dateStr)}</p>
-    <iframe class="mail-body-frame" scrolling="no" id="bodyFrame" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+<iframe class="mail-body-frame" scrolling="no" id="bodyFrame" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
     ${attachmentsHtml}
   `;
 
