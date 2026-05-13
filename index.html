@@ -371,6 +371,7 @@
           <input id="searchInput" type="text" placeholder="검색" autocomplete="off" />
         </label>
       </div>
+      <div id="yearFilterPanel" class="year-filter-panel"></div>
     </header>
     <div id="listContainer" class="list">
       <div class="loading"><span class="spinner"></span>편지함 불러오는 중…</div>
@@ -415,6 +416,8 @@ let allMails = [];
 let filteredMails = [];
 let renderedCount = 0;
 let currentYearFilter = null;
+
+const yearFilterPanel = document.getElementById('yearFilterPanel');
 const PAGE_SIZE = 60;
 
 function escapeHtml(s) {
@@ -531,9 +534,12 @@ function applyFilter() {
   filteredMails = allMails.filter(m => {
 
     // 연도 필터
-    if (currentYearFilter) {
+    if (currentYearFilter !== null) {
       const year = new Date(m.date).getFullYear();
-      if (year !== currentYearFilter) return false;
+
+      if (year !== currentYearFilter) {
+        return false;
+      }
     }
 
     // 검색 필터
@@ -661,6 +667,44 @@ function renderDetail(d) {
       table { max-width: 100% !important; }
       .plain-text { white-space: pre-wrap; }
       @media (prefers-color-scheme: dark) { body { color: #fff; } a { color: #0a84ff; } }
+      .year-filter-panel {
+  display: none;
+  background: var(--bg-elev);
+  border-top: 0.5px solid var(--sep-light);
+  border-bottom: 0.5px solid var(--sep-light);
+}
+
+.year-filter-panel.open {
+  display: block;
+}
+
+.year-filter-item {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 0.5px solid var(--sep-light);
+  font-size: 15px;
+}
+
+.year-filter-item:last-child {
+  border-bottom: 0;
+}
+
+.year-filter-item:active {
+  background: var(--row-active);
+}
+
+.year-filter-item.active {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.year-filter-count {
+  color: var(--text-3);
+  font-size: 13px;
+}
     </style>
   </head><body>${d.body_html || '<div class="empty">(빈 메일)</div>'}
     <script>
@@ -695,6 +739,57 @@ function closeDetail() {
   if (location.hash.startsWith('#m=')) {
     history.pushState({}, '', location.pathname);
   }
+}
+
+  function toggleYearFilter() {
+
+  yearFilterPanel.classList.toggle('open');
+
+  if (!yearFilterPanel.classList.contains('open')) {
+    return;
+  }
+
+  const yearMap = {};
+
+  allMails.forEach(m => {
+    const year = new Date(m.date).getFullYear();
+
+    yearMap[year] = (yearMap[year] || 0) + 1;
+  });
+
+  const years = Object.keys(yearMap)
+    .map(Number)
+    .sort((a, b) => b - a);
+
+  let html = `
+    <div class="year-filter-item ${currentYearFilter === null ? 'active' : ''}"
+         onclick="setYearFilter(null)">
+      <span>전체</span>
+      <span class="year-filter-count">${allMails.length}</span>
+    </div>
+  `;
+
+  years.forEach(year => {
+
+    html += `
+      <div class="year-filter-item ${currentYearFilter === year ? 'active' : ''}"
+           onclick="setYearFilter(${year})">
+        <span>${year}</span>
+        <span class="year-filter-count">${yearMap[year]}</span>
+      </div>
+    `;
+  });
+
+  yearFilterPanel.innerHTML = html;
+}
+
+function setYearFilter(year) {
+
+  currentYearFilter = year;
+
+  applyFilter();
+
+  toggleYearFilter();
 }
 
 window.openMail = openMail;
