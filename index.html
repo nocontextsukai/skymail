@@ -352,7 +352,12 @@
         
 .year-filter-panel {
   display: none;
-  background: var(--bg-elev);
+
+  background: color-mix(in srgb, var(--bg) 75%, transparent);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
   border-top: 0.5px solid var(--sep-light);
   border-bottom: 0.5px solid var(--sep-light);
 
@@ -361,7 +366,6 @@
 
   flex-wrap: wrap;
 }
-
 .year-filter-panel.open {
   display: flex;
 }
