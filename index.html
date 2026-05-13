@@ -264,7 +264,8 @@
     margin-top: 10px;
     min-height: 200px;
     display: block;
-  }
+  overflow: hidden;
+}
   .mail-meta-line {
     font-size: 13px; color: var(--text-3);
     margin: 14px 0 0;
@@ -678,7 +679,7 @@ function renderDetail(d) {
       <div></div>
     </div>
     <p class="mail-meta-line">${escapeHtml(dateStr)}</p>
-    <iframe class="mail-body-frame" id="bodyFrame" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+    <iframe class="mail-body-frame" scrolling="no" id="bodyFrame" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
     ${attachmentsHtml}
   `;
 
