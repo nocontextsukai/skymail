@@ -258,6 +258,7 @@
   }
   .mail-body-frame {
     width: 100%;
+    height: auto;
     border: 0;
     background: var(--bg-elev);
     border-radius: 0;
@@ -723,10 +724,25 @@ function renderDetail(d) {
   </head><body>${d.body_html || '<div class="empty">(빈 메일)</div>'}
     <script>
       // Resize parent iframe to content height
-      function reportH(){
-        const h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
-        parent.postMessage({type:'mailH', h: h}, '*');
-      }
+     function reportH(){
+
+  const body = document.body;
+  const html = document.documentElement;
+
+  const h = Math.max(
+    body.scrollHeight,
+    body.offsetHeight,
+    body.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight,
+    html.clientHeight
+  );
+
+  parent.postMessage({
+    type:'mailH',
+    h: h
+  }, '*');
+}
       window.addEventListener('load', () => { reportH(); setTimeout(reportH, 200); setTimeout(reportH, 800); });
       window.addEventListener('resize', reportH);
       const ro = new ResizeObserver(reportH); ro.observe(document.body);
@@ -744,7 +760,7 @@ window.addEventListener('message', e => {
   if (!e.data || e.data.type !== 'mailH') return;
   const frame = document.getElementById('bodyFrame');
   if (frame && typeof e.data.h === 'number') {
-    frame.style.height = (e.data.h + 16) + 'px';
+    frame.style.height = (e.data.h + 80) + 'px';
   }
 });
 
