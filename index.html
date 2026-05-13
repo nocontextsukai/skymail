@@ -684,6 +684,24 @@ function renderDetail(d) {
   `;
 
   const frame = document.getElementById('bodyFrame');
+  frame.onload = () => {
+  try {
+    const doc = frame.contentWindow.document;
+
+    const resize = () => {
+      frame.style.height =
+        doc.documentElement.scrollHeight + 'px';
+    };
+
+    resize();
+
+    setTimeout(resize, 300);
+    setTimeout(resize, 1000);
+
+  } catch (e) {
+    console.log(e);
+  }
+};
   // Use srcdoc with a self-contained doc; resolve relative urls correctly by setting a <base>.
   const baseHref = location.href.replace(/[^/]*$/, '');
   const bodyDoc = `<!DOCTYPE html><html><head>
@@ -725,24 +743,6 @@ function renderDetail(d) {
 window.addEventListener('message', e => {
   if (!e.data || e.data.type !== 'mailH') return;
   const frame = document.getElementById('bodyFrame');
-  frame.onload = () => {
-  try {
-    const doc = frame.contentWindow.document;
-
-    const resize = () => {
-      frame.style.height =
-        doc.documentElement.scrollHeight + 'px';
-    };
-
-    resize();
-
-    setTimeout(resize, 300);
-    setTimeout(resize, 1000);
-
-  } catch (e) {
-    console.log(e);
-  }
-};
   if (frame && typeof e.data.h === 'number') {
     frame.style.height = (e.data.h + 16) + 'px';
   }
