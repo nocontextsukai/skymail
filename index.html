@@ -527,7 +527,13 @@ function highlightText(text, query) {
 function renderListRow(m, query) {
   const safeFrom = highlightText(m.from_name || m.from_addr || '(보낸이 없음)', query);
   const safeSubject = highlightText(m.subject || '(제목 없음)', query);
-  const safePreview = highlightText(m.preview || '', query);
+let previewText = m.preview || '';
+
+if (m.subject) {
+  previewText = previewText.replace(m.subject, '').trim();
+}
+
+const safePreview = highlightText(previewText, query);
   const dateStr = formatDate(m.date);
   const attachIcon = m.has_attachments
     ? '<span class="list-attach" title="첨부 있음">📎</span>' : '';
