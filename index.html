@@ -1,53 +1,92 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
-<meta name="theme-color" content="#f2f2f7">
-<title>받은 편지함</title>
-<style>
-:root {
-  --bg: #f2f2f7;
-  --bg-elev: #ffffff;
-  --sep: rgba(60,60,67,0.18);
-  --sep-light: rgba(60,60,67,0.08);
-  --text: #000000;
-  --text-3: #8e8e93;
-  --blue: #007aff;
-  --search-bg: rgba(118,118,128,0.12);
-  --row-active: rgba(118,118,128,0.18);
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  app.classList.add('show-detail');
+
+  const res = await fetch('data/mails/' + encodeURIComponent(id) + '.json');
+  const d = await res.json();
+
+  const bodyHtml = (d.body_html || '')
+    .replace(/hangin/gi, 'JAM');
+
+  detailScroll.innerHTML = `
+    <h1 class="mail-subject">${escapeHtml(d.subject || '(제목 없음)')}</h1>
+
+    <div style="color:var(--text-3); margin-bottom:14px;">
+      ${escapeHtml(d.from_name || '')}
+      ·
+      ${new Date(d.date).toLocaleString('ko-KR')}
+    </div>
+
+    <div class="mail-body-content">
+      ${bodyHtml}
+    </div>
+  `;
+
+  history.pushState({ mailId: id }, '', '#m=' + encodeURIComponent(id));
+});
+
+function closeDetail() {
+  app.classList.remove('show-detail');
+  history.pushState({}, '', location.pathname);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --bg-elev: #1c1c1e;
-    --sep: rgba(84,84,88,0.65);
-    --sep-light: rgba(84,84,88,0.3);
-    --text: #ffffff;
-    --text-3: #ebebf599;
-    --blue: #0a84ff;
-    --search-bg: rgba(118,118,128,0.24);
-    --row-active: rgba(118,118,128,0.32);
-  }
-}
+window.closeDetail = closeDetail;
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+searchInput.addEventListener('input', renderList);
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", sans-serif;
-  overflow-x: hidden;
-}
+filterBtn.addEventListener('click', () => {
+  filterMenu.classList.toggle('show');
+});
 
-body {
-  -webkit-touch-callout: none;
+fetch('data/index.json')
+  .then(r => r.json())
+  .then(data => {
+
+    allMails = data.map(m => ({
+      ...m,
+      body_text: m.body_text || '',
+      read: false
+    }));
+
+    mailCount.textContent = `(${allMails.length})`;
+
+    const years = [...new Set(allMails.map(m => new Date(m.date).getFullYear()))]
+      .sort((a,b) => b-a);
+
+    filterMenu.innerHTML = `
+      <div class="filter-item" data-year="all">전체 메일</div>
+      ${years.map(y => `<div class="filter-item" data-year="${y}">${y}</div>`).join('')}
+    `;
+
+    filterMenu.addEventListener('click', (e) => {
+
+      const item = e.target.closest('.filter-item');
+      if (!item) return;
+
+      const year = item.dataset.year;
+
+      currentYearFilter = year === 'all'
+        ? null
+        : Number(year);
+
+      filterMenu.classList.remove('show');
+
+      renderList();
+    });
+
+    renderList();
+  });
+
+window.addEventListener('popstate', () => {
+  app.classList.remove('show-detail');
+});
+
+// 우클릭 방지
+
+document.addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
+
+</script>
+</body>
 </html>
