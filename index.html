@@ -386,7 +386,7 @@
             stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>받은 편지함</span>
         </button>
-        <span class="nav-actions" onclick="alert('읽기 전용 백업 뷰입니다.')">…</span>
+        <span class="nav-actions" onclick="toggleYearFilter()">…</span>
       </div>
     </header>
     <div class="detail-scroll" id="detailScroll">
@@ -414,6 +414,7 @@ const updatedAt = document.getElementById('updatedAt');
 let allMails = [];
 let filteredMails = [];
 let renderedCount = 0;
+let currentYearFilter = null;
 const PAGE_SIZE = 60;
 
 function escapeHtml(s) {
@@ -526,16 +527,47 @@ function renderList(reset) {
 
 function applyFilter() {
   const q = searchInput.value.trim().toLowerCase();
-  if (!q) {
-    filteredMails = allMails;
-  } else {
-    filteredMails = allMails.filter(m => {
-      return (m.subject || '').toLowerCase().includes(q)
-          || (m.from_name || '').toLowerCase().includes(q)
-          || (m.preview || '').toLowerCase().includes(q);
-    });
-  }
+
+  filteredMails = allMails.filter(m => {
+
+    // 연도 필터
+    if (currentYearFilter) {
+      const year = new Date(m.date).getFullYear();
+      if (year !== currentYearFilter) return false;
+    }
+
+    // 검색 필터
+    if (!q) return true;
+
+    return (
+      (m.subject || '').toLowerCase().includes(q) ||
+      (m.from_name || '').toLowerCase().includes(q) ||
+      (m.preview || '').toLowerCase().includes(q)
+    );
+  });
+
   renderList(true);
+}
+
+  function toggleYearFilter() {
+
+  const years = [...new Set(
+    allMails.map(m => new Date(m.date).getFullYear())
+  )].sort((a, b) => b - a);
+
+  const selected = prompt(
+    `연도를 입력하세요.\n\n전체: all\n${years.join('\n')}`
+  );
+
+  if (selected === null) return;
+
+  if (selected.toLowerCase() === 'all') {
+    currentYearFilter = null;
+  } else {
+    currentYearFilter = parseInt(selected);
+  }
+
+  applyFilter();
 }
 
 // Infinite scroll
