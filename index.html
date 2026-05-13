@@ -744,8 +744,9 @@ function renderDetail(d) {
   }, '*');
 }
       window.addEventListener('load', () => { reportH(); setTimeout(reportH, 200); setTimeout(reportH, 800); });
-      window.addEventListener('resize', reportH);
-      const ro = new ResizeObserver(reportH); ro.observe(document.body);
+window.addEventListener('resize', reportH);
+
+setInterval(reportH, 1000);
       // open links in new tab
       document.addEventListener('click', e => {
         const a = e.target.closest('a');
