@@ -349,6 +349,48 @@
 
   /* highlight search match */
   .hl { background: rgba(255,204,0,0.35); border-radius: 2px; }
+        
+.year-filter-panel {
+  display: none;
+  background: var(--bg-elev);
+  border-top: 0.5px solid var(--sep-light);
+  border-bottom: 0.5px solid var(--sep-light);
+
+  padding: 12px;
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+.year-filter-panel.open {
+  display: flex;
+}
+
+.year-filter-item {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--search-bg);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  border: 1px solid transparent;
+}
+
+.year-filter-item.active {
+  font-weight: 700;
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.year-filter-count {
+  opacity: 0.7;
+  font-size: 12px;
+}
 </style>
 </head>
 <body>
@@ -555,26 +597,7 @@ function applyFilter() {
   renderList(true);
 }
 
-  function toggleYearFilter() {
 
-  const years = [...new Set(
-    allMails.map(m => new Date(m.date).getFullYear())
-  )].sort((a, b) => b - a);
-
-  const selected = prompt(
-    `연도를 입력하세요.\n\n전체: all\n${years.join('\n')}`
-  );
-
-  if (selected === null) return;
-
-  if (selected.toLowerCase() === 'all') {
-    currentYearFilter = null;
-  } else {
-    currentYearFilter = parseInt(selected);
-  }
-
-  applyFilter();
-}
 
 // Infinite scroll
 inboxView.addEventListener('scroll', () => {
@@ -667,57 +690,6 @@ function renderDetail(d) {
       table { max-width: 100% !important; }
       .plain-text { white-space: pre-wrap; }
       @media (prefers-color-scheme: dark) { body { color: #fff; } a { color: #0a84ff; } }
-      
-.year-filter-panel {
-  display: none;
-  background: var(--bg-elev);
-  border-top: 0.5px solid var(--sep-light);
-  border-bottom: 0.5px solid var(--sep-light);
-
-  padding: 12px;
-  gap: 10px;
-
-  flex-wrap: wrap;
-}
-
-.year-filter-panel.open {
-  display: flex;
-}
-
-.year-filter-item {
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: var(--search-bg);
-
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  cursor: pointer;
-
-  font-size: 14px;
-  border: 1px solid transparent;
-}
-
-.year-filter-item:last-child {
-  border-bottom: 0;
-}
-
-.year-filter-item.active {
-  font-weight: 700;
-  border-color: var(--blue);
-  color: var(--blue);
-}
-
-.year-filter-item.active {
-  color: var(--blue);
-  font-weight: 600;
-}
-
-.year-filter-count {
-  opacity: 0.7;
-  font-size: 12px;
-}
     </style>
   </head><body>${d.body_html || '<div class="empty">(빈 메일)</div>'}
     <script>
