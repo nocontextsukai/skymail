@@ -746,7 +746,7 @@ function renderDetail(d) {
       window.addEventListener('load', () => { reportH(); setTimeout(reportH, 200); setTimeout(reportH, 800); });
 window.addEventListener('resize', reportH);
 
-setInterval(reportH, 1000);
+
       // open links in new tab
       document.addEventListener('click', e => {
         const a = e.target.closest('a');
@@ -757,12 +757,26 @@ setInterval(reportH, 1000);
   frame.srcdoc = bodyDoc;
 }
 
+let lastHeight = 0;
+
 window.addEventListener('message', e => {
+
   if (!e.data || e.data.type !== 'mailH') return;
+
   const frame = document.getElementById('bodyFrame');
-  if (frame && typeof e.data.h === 'number') {
-    frame.style.height = (e.data.h + 80) + 'px';
+
+  if (!frame) return;
+
+  const nextHeight = Math.ceil(e.data.h);
+
+  // 너무 작은 변화는 무시
+  if (Math.abs(nextHeight - lastHeight) < 10) {
+    return;
   }
+
+  lastHeight = nextHeight;
+
+  frame.style.height = nextHeight + 'px';
 });
 
 function closeDetail() {
