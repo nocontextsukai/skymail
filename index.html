@@ -266,6 +266,30 @@
     display: block;
   overflow: hidden;
 }
+
+  .mail-body-content {
+  margin-top: 10px;
+  font-size: 17px;
+  line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.mail-body-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 6px auto;
+  border-radius: 4px;
+}
+
+.mail-body-content table {
+  max-width: 100% !important;
+}
+
+.mail-body-content a {
+  color: var(--blue);
+}
   .mail-meta-line {
     font-size: 13px; color: var(--text-3);
     margin: 14px 0 0;
@@ -679,11 +703,9 @@ function renderDetail(d) {
       <div></div>
     </div>
     <p class="mail-meta-line">${escapeHtml(dateStr)}</p>
-    <iframe class="mail-body-frame" scrolling="no" id="bodyFrame" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
-    ${attachmentsHtml}
-  `;
-
-  const frame = document.getElementById('bodyFrame');
+<div class="mail-body-content">
+  ${d.body_html || '<div class="empty">(빈 메일)</div>'}
+</div>
   // Use srcdoc with a self-contained doc; resolve relative urls correctly by setting a <base>.
   const baseHref = location.href.replace(/[^/]*$/, '');
   const bodyDoc = `<!DOCTYPE html><html><head>
