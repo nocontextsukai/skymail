@@ -104,6 +104,10 @@
     display: flex; align-items: center; justify-content: space-between;
     height: 36px;
   }
+  .nav-side {
+  width: 48px;
+  flex-shrink: 0;
+}
   .nav-title {
     font-size: 17px; font-weight: 600;
   }
@@ -416,9 +420,18 @@
   <div class="inbox-view" id="inboxView">
     <header class="nav-bar">
 <div class="nav-row">
-  <div></div>
-  <div class="nav-title">받은 편지함</div>
-  <span class="nav-actions" onclick="toggleYearFilter()">필터</span>
+
+  <div class="nav-side"></div>
+
+  <div class="nav-title">
+    받은 편지함
+  </div>
+
+  <div class="nav-side nav-actions"
+       onclick="toggleYearFilter()">
+    필터
+  </div>
+
 </div>
       <h1 class="large-title">받은 편지함</h1>
       <div class="search-wrap">
