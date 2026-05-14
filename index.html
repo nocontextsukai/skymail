@@ -247,6 +247,16 @@
     color: var(--text);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
+  .from-address {
+  font-size: 13px;
+  color: var(--text-3);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  margin-top: -2px;
+}
   .to-line {
     font-size: 14px; color: var(--text-3);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -673,11 +683,20 @@ function renderDetail(d) {
     <h1 class="mail-subject">${escapeHtml(subject)}</h1>
     <div class="mail-header">
       <div class="avatar">${escapeHtml(avatar)}</div>
-      <div class="from-name">${escapeHtml(from)}</div>
-      <div class="mail-date">${escapeHtml(formatDate(d.date))}</div>
-      <div></div>
-      <div class="to-line"><span class="to-label">받는 사람: </span>${escapeHtml('****')}</div>
-      <div></div>
+<div class="from-name">${escapeHtml(from)}</div>
+
+<div class="mail-date">
+  ${escapeHtml(formatDate(d.date))}
+</div>
+
+<div class="from-address">
+  &lt;${escapeHtml(d.from_addr || '')}&gt;
+</div>
+
+<div class="to-line">
+  <span class="to-label">받는 사람: </span>
+  ${escapeHtml('JAM')}
+</div>
     </div>
     <p class="mail-meta-line">${escapeHtml(dateStr)}</p>
 <iframe class="mail-body-frame" scrolling="no" id="bodyFrame" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
